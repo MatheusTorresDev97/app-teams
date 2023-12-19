@@ -10,7 +10,7 @@ import theme from "@theme/index";
 import { Loading } from "@components/Loading";
 import { StatusBar } from "react-native";
 
-import { Groups } from "@screens/Groups";
+import { Players } from "@screens/Players";
 
 export default function App() {
   const [fonstLoaded] = useFonts({ Roboto_400Regular, Roboto_700Bold });
@@ -22,7 +22,7 @@ export default function App() {
       backgroundColor="transparent"
       translucent
       />
-      {fonstLoaded ? <Groups /> : <Loading />}
+      {fonstLoaded ? <Players /> : <Loading />}
     </ThemeProvider>
   );
 }
