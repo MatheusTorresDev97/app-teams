@@ -8,8 +8,9 @@ import {
 import theme from "@theme/index";
 
 import { Loading } from "@components/Loading";
-import { Groups } from "@screens/Groups";
 import { StatusBar } from "react-native";
+
+import { NewGroup } from "@screens/NewGroup";
 
 export default function App() {
   const [fonstLoaded] = useFonts({ Roboto_400Regular, Roboto_700Bold });
@@ -21,7 +22,7 @@ export default function App() {
       backgroundColor="transparent"
       translucent
       />
-      {fonstLoaded ? <Groups /> : <Loading />}
+      {fonstLoaded ? <NewGroup /> : <Loading />}
     </ThemeProvider>
   );
 }
