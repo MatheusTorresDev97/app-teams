@@ -9,10 +9,8 @@ import { Button } from "@components/Button";
 import { Container } from "./styles";
 
 export const Groups = () => {
-  const [groups, setGroups] = useState<string[]>([
-    "Galera do NTI",
-    "Amigos do NTI",
-  ]);
+  const [groups, setGroups] = useState<string[]>([]);
+
 
   return (
     <Container>
@@ -30,7 +28,10 @@ export const Groups = () => {
         )}
       />
 
-      <Button title="Criar nova turma" />
+      <Button 
+      title="Criar nova turma" 
+      onPress={ handleNewGroup }    
+      />
     </Container>
   );
 };
