@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { FlatList, Alert, TextInput, Keyboard } from "react-native";
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useRoute, useNavigation } from "@react-navigation/native";
 
 import { AppError } from "@utils/AppError";
 
@@ -8,7 +8,7 @@ import { PlayerStorageDTO } from "@storage/player/PlayerStorageDTO";
 import { playerAddByGroup } from "@storage/player/playerAddByGroup";
 import { playersGetByGroupAndTeam } from "@storage/player/playersGetByGroupAndTeam";
 import { playerRemoveByGroup } from "@storage/player/playerRemoveByGroup";
-import { groupRemoveByName } from '@storage/group/groupRemoveByName';
+import { groupRemoveByName } from "@storage/group/groupRemoveByName";
 
 import { Header } from "@components/Header";
 import { Highlight } from "@components/Highlight";
@@ -18,6 +18,7 @@ import { Input } from "@components/Input";
 import { PlayerCard } from "@components/PlayerCard";
 import { ListEmpty } from "@components/ListEmpty";
 import { Button } from "@components/Button";
+import { Loading } from "@components/Loading";
 
 import { Container, Form, HeaderList, NumberOfPlayer } from "./styles";
 
@@ -26,16 +27,16 @@ type RouteParams = {
 };
 
 export const Players = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [newPlayerName, setNewPlayerName] = useState("");
   const [team, setTeam] = useState("Time A");
   const [players, setPlayers] = useState<PlayerStorageDTO[]>([]);
+  const newPlayerNameInputRef = useRef<TextInput>(null);
 
   const navigation = useNavigation();
   const { params } = useRoute();
 
   const { group } = params as RouteParams;
-
-  const newPlayerNameInputRef = useRef<TextInput>(null);
 
   const handleAddPlayer = async () => {
     if (newPlayerName.trim().length === 0) {
@@ -68,8 +69,10 @@ export const Players = () => {
 
   const fetchPlayersByTeam = async () => {
     try {
+      setIsLoading(true);
       const playersByTeam = await playersGetByGroupAndTeam(group, team);
       setPlayers(playersByTeam);
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
       Alert.alert(
@@ -94,24 +97,19 @@ export const Players = () => {
   const groupRemove = async () => {
     try {
       await groupRemoveByName(group);
-      navigation.navigate('groups');
-
+      navigation.navigate("groups");
     } catch (error) {
-       console.log(error);
-      Alert.alert('Remover Grupo', 'Não foi posível remover o grupo');
+      console.log(error);
+      Alert.alert("Remover Grupo", "Não foi posível remover o grupo");
     }
-  }
+  };
 
   const handleGroupRemove = async () => {
-    Alert.alert(
-      'Remover',
-      'Deseja remover o grupo?',
-      [
-        { text: 'Não', style: 'cancel' },
-        { text: 'Sim', onPress: () => groupRemove() }
-      ]
-    )
-  }
+    Alert.alert("Remover", "Deseja remover a turma?", [
+      { text: "Não", style: "cancel" },
+      { text: "Sim", onPress: () => groupRemove() },
+    ]);
+  };
 
   useEffect(() => {
     fetchPlayersByTeam();
@@ -154,23 +152,34 @@ export const Players = () => {
         <NumberOfPlayer>{players.length}</NumberOfPlayer>
       </HeaderList>
 
-      <FlatList
-        data={players}
-        keyExtractor={(item) => item.name}
-        renderItem={({ item }) => (
-          <PlayerCard name={item.name}   onRemove={() => handlePlayerRemove(item.name)} />
-        )}
-        ListEmptyComponent={() => (
-          <ListEmpty message="Não há pessoas nesse time" />
-        )}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={[
-          { paddingBottom: 100 },
-          players.length === 0 && { flex: 1 },
-        ]}
-      />
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <FlatList
+          data={players}
+          keyExtractor={(item) => item.name}
+          renderItem={({ item }) => (
+            <PlayerCard
+              name={item.name}
+              onRemove={() => handlePlayerRemove(item.name)}
+            />
+          )}
+          ListEmptyComponent={() => (
+            <ListEmpty message="Não há pessoas nesse time" />
+          )}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={[
+            { paddingBottom: 100 },
+            players.length === 0 && { flex: 1 },
+          ]}
+        />
+      )}
 
-      <Button title="Remover Turma" type="SECONDARY" onPress={handleGroupRemove}/>
+      <Button
+        title="Remover Turma"
+        type="SECONDARY"
+        onPress={handleGroupRemove}
+      />
     </Container>
   );
 };

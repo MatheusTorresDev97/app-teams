@@ -6,7 +6,7 @@ import { Container, Content, Icon } from "./styles";
 import { Alert } from "react-native";
 
 import { Header } from "@components/Header";
-import { Hightlight } from "@components/Highlight";
+import { Highlight } from "@components/Highlight";
 import { Button } from "@components/Button";
 import { Input } from "@components/Input";
 
@@ -40,7 +40,7 @@ export const NewGroup = () => {
       <Content>
         <Icon />
 
-        <Hightlight
+        <Highlight
           title="Nova turma"
           subtitle="crie a turma para adicionar as pessoas"
         />
